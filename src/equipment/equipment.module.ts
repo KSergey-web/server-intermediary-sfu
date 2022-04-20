@@ -11,14 +11,12 @@ import { AXIOS } from './constants';
     EquipmentService,
     {
       provide: AXIOS,
-      useValue: axios
-    }
-  ]
+      useValue: axios,
+    },
+  ],
 })
 export class EquipmentModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AccessEquipmentMiddleware)
-      .forRoutes(EquipmentController);
+    consumer.apply(AccessEquipmentMiddleware).forRoutes(EquipmentController);
   }
 }

@@ -6,10 +6,12 @@ import { AppService } from './app.service';
 import { EquipmentModule } from './equipment/equipment.module';
 
 @Module({
-  imports: [EquipmentModule,  
+  imports: [
+    EquipmentModule,
     ServeStaticModule.forRoot({
-    rootPath: join(__dirname, '..', 'client'),
-  }),],
+      rootPath: join(__dirname, '..', 'client'),
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

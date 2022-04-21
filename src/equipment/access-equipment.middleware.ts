@@ -1,34 +1,21 @@
-import {
-  ForbiddenException,
-  Inject,
-  Injectable,
-  NestMiddleware,
-} from '@nestjs/common';
-import { AxiosStatic } from 'axios';
-import { AXIOS } from './constants';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ICONNECTION_STRAPI } from './constants';
 import { IEquipment } from './interfaces/equipment.interface';
-import { AxiosOperations } from './axios-operations.class';
+import { IConnectionStrapi } from './interfaces/http-strapi.interface';
 
 @Injectable()
 export class AccessEquipmentMiddleware implements NestMiddleware {
-  constructor(@Inject(AXIOS) private axios: AxiosStatic) {}
+  constructor(
+    @Inject(ICONNECTION_STRAPI)
+    private readonly connectionStrapi: IConnectionStrapi,
+  ) {}
+
   async use(req: Request, res: Response, next: () => void) {
-    const axiosInstance = AxiosOperations.initReqToStrapiWithJwt(
-      req,
-      this.axios,
-    );
-    const sessionId = parseInt(req.params.sessionId);
-    let equipment: IEquipment;
-    try {
-      const response = await axiosInstance.get(
-        `api/sessions/${sessionId}/canConnect`,
-      );
-      equipment = response.data.equipment;
-    } catch (error) {
-      AxiosOperations.handleAxiosError(error);
-    }
-    if (!equipment) throw new ForbiddenException();
+    const jwt = req.headers.authorization;
+    const sessionId = req.params.sessionId;
+    const equipment: IEquipment =
+      await this.connectionStrapi.canAccessToSession(sessionId, jwt);
     req.query.server_url = equipment.server_url;
     next();
   }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+        integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <script>
+        const socket = io("/equipment", {
+            auth: {
+                token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjUwMzUyOTc1LCJleHAiOjE2NTI5NDQ5NzV9.I5nva2CSYE-g845d_dPiO6h4q5MyLJz7N7Lb9Q-dCB4",
+                room:'happy'
+            }
+        });
+    </script>
+
+</body>
+
+</html>doctype

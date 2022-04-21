@@ -4,6 +4,7 @@ import { EquipmentController } from './equipment.controller';
 import { AccessEquipmentMiddleware } from './access-equipment.middleware';
 import axios from 'axios';
 import { AXIOS } from './constants';
+import { EquipmentGateway } from './equipment.gateway';
 
 @Module({
   controllers: [EquipmentController],
@@ -13,6 +14,7 @@ import { AXIOS } from './constants';
       provide: AXIOS,
       useValue: axios,
     },
+    EquipmentGateway,
   ],
 })
 export class EquipmentModule implements NestModule {

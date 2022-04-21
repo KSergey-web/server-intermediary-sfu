@@ -9,7 +9,9 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { ICONNECTION_STRAPI } from './constants';
+import { IEquipment } from './interfaces/equipment.interface';
 import { IConnectionStrapi } from './interfaces/http-strapi.interface';
+import { ILabServerOutput } from './interfaces/lab-server-output.interface';
 import { IUser } from './interfaces/user.interface';
 
 @WebSocketGateway({
@@ -25,23 +27,30 @@ export class EquipmentGateway
   private logger: Logger = new Logger('SocketGateway');
 
   @WebSocketServer()
-  server: Server;
+  private server: Server;
 
   handleDisconnect(client: Socket) {
-    this.logger.log((client.request as any).user);
+    this.logger.log(client.id);
+  }
+
+  sendOutputToUsers(sessionId: string, output: ILabServerOutput) {
+    this.server.to(sessionId).emit('output');
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log((client.request as any).user);
+    const sessionId = (client.request as any).sessionId;
+    client.join(`${sessionId}`);
+    this.logger.log(client.id);
   }
 
   private setAuthMiddleware(server: Server) {
     server.use(async (socket, next) => {
-      const token = socket.handshake.auth?.token;
+      const jwt = socket.handshake.auth?.token;
+      const sessionId = socket.handshake.auth?.sessionId;
       this.logger.log(socket.handshake.auth);
       try {
-        const user: IUser = await this.connectionStapi.whoAmI(token);
-        (socket.request as any).user = user;
+        await this.connectionStapi.canAccessToSession(jwt, sessionId);
+        (socket.request as any).sessionId = sessionId;
         next();
       } catch (err) {
         next(new Error('unauthorized'));

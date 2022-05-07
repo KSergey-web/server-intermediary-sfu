@@ -3,7 +3,7 @@ import { IUser } from './user.interface';
 
 export interface IConnectionStrapi {
   whoAmI: (jwt: string) => Promise<IUser>;
-  canAccessToSession: (
+  getEquipmentForConnect: (
     sessionId: number | string,
     jwt: string,
   ) => Promise<IEquipment>;

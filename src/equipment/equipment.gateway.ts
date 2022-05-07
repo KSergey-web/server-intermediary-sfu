@@ -16,6 +16,9 @@ import { IUser } from './interfaces/user.interface';
 
 @WebSocketGateway({
   namespace: 'equipment',
+    cors: {
+      origin: ["http://localhost:4200"]
+    }
 })
 export class EquipmentGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -34,7 +37,7 @@ export class EquipmentGateway
   }
 
   sendOutputToUsers(sessionId: string, output: ILabServerOutput) {
-    this.server.to(sessionId).emit('output');
+    this.server.to(sessionId).emit('output', output);
   }
 
   handleConnection(client: Socket, ...args: any[]) {
@@ -49,11 +52,11 @@ export class EquipmentGateway
       const sessionId = socket.handshake.auth?.sessionId;
       this.logger.log(socket.handshake.auth);
       try {
-        await this.connectionStapi.canAccessToSession(jwt, sessionId);
+        await this.connectionStapi.getEquipmentForConnect(sessionId, jwt);
         (socket.request as any).sessionId = sessionId;
         next();
       } catch (err) {
-        next(new Error('unauthorized'));
+        next(new Error('session unavailable'));
       }
     });
   }

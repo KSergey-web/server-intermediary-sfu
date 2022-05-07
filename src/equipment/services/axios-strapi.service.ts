@@ -28,7 +28,7 @@ export class AxiosStrapiService implements IConnectionStrapi {
     }
   }
 
-  async canAccessToSession(
+  async getEquipmentForConnect(
     sessionId: string | number,
     jwt: string,
   ): Promise<IEquipment> {

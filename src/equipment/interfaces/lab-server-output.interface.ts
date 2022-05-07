@@ -1,5 +1,5 @@
 export interface ILabServerOutput {
-  stdout: string;
+  stdout?: string;
   switches?: string;
-  range?: string;
+  resistor?: string;
 }

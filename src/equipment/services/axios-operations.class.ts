@@ -18,12 +18,22 @@ export abstract class AxiosOperations {
     return instance;
   }
 
-  static handleAxiosError(error): unknown {
+  static handleAxiosEquipmentError(error): unknown {
     const response = error.response;
     if (response)
-      throw new HttpException(response?.data?.message, response?.status ?? 500);
+      throw new HttpException(response?.data, response?.status ?? 500);
     throw new HttpException(
-      'it seems the server is not available',
+      'it seems the Equipment server is not available',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+
+  static handleAxiosStrapiError(res): unknown {
+    const error = res.response?.data?.error;
+    if (error)
+      throw new HttpException(error, error.status ?? 500);
+    throw new HttpException(
+      'it seems the server Strapi is not available',
       HttpStatus.INTERNAL_SERVER_ERROR,
     );
   }

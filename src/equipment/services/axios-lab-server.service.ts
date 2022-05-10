@@ -17,7 +17,7 @@ export class AxiosLabServerService implements IConnectionLabServer {
       const response = await axios.get(url_server + command);
       return response.data;
     } catch (error) {
-      AxiosOperations.handleAxiosError(error);
+      AxiosOperations.handleAxiosEquipmentError(error);
     }
   }
 
@@ -36,7 +36,7 @@ export class AxiosLabServerService implements IConnectionLabServer {
       });
       return response.data;
     } catch (error) {
-      AxiosOperations.handleAxiosError(error);
+      AxiosOperations.handleAxiosEquipmentError(error);
     }
   }
 }

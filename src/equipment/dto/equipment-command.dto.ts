@@ -7,4 +7,6 @@ export class EquipmentCommandDto {
   command: string;
 
   server_url: string;
+
+  equipment_type: string;
 }

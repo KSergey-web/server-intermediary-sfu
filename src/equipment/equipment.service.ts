@@ -16,6 +16,7 @@ export class EquipmentService {
     return await this.connectionLabServer.sendCommand(url_server, command);
   }
 
+
   async sendFile(
     url_server: string,
     command: string,

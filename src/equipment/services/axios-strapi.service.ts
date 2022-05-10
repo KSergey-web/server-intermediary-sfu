@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AXIOS, STRAPI_SERVER_URL } from '../constants';
@@ -10,6 +11,7 @@ import { IUser } from '../interfaces/user.interface';
 import { AxiosOperations } from './axios-operations.class';
 import axios, { AxiosStatic } from 'axios';
 import { IConnectionStrapi } from '../interfaces/http-strapi.interface';
+import { ISession } from '../interfaces/session.interface';
 
 @Injectable()
 export class AxiosStrapiService implements IConnectionStrapi {
@@ -24,7 +26,7 @@ export class AxiosStrapiService implements IConnectionStrapi {
       const response = await instance.get('/api/users/me');
       return response.data;
     } catch (err) {
-      AxiosOperations.handleAxiosError(err);
+      AxiosOperations.handleAxiosStrapiError(err);
     }
   }
 
@@ -42,11 +44,11 @@ export class AxiosStrapiService implements IConnectionStrapi {
       const response = await axiosInstance.get(
         `api/sessions/${sessionId}/canConnect`,
       );
-      equipment = response.data.equipment;
+      equipment = (response.data.session as ISession).equipment;
     } catch (error) {
-      AxiosOperations.handleAxiosError(error);
+      AxiosOperations.handleAxiosStrapiError(error);
     }
-    if (!equipment) throw new ForbiddenException('Equipment is undefined');
+    if (!equipment) throw new InternalServerErrorException('Equipment received from strapi is undefined');
     return equipment;
   }
 }

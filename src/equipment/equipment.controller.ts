@@ -36,7 +36,20 @@ export class EquipmentController {
     @Query() dto: EquipmentCommandDto,
     @Param('sessionId') sessionId: string,
     ): Promise<ILabServerOutput> {
-    const output: ILabServerOutput= await this.equipmentService.sendCommand(dto.server_url, dto.command);
+    const url = dto.server_url + '/' + dto.equipment_type;
+    const output: ILabServerOutput= await this.equipmentService.sendCommand(url, dto.command);
+    this.equipmentGateway.sendOutputToUsers(sessionId, output);
+    return output;
+  }
+
+  @ApiBearerAuth()
+  @Get('check-availability-server/session/:sessionId')
+  @ApiParam({ name: 'sessionId' })
+  async checkAvailabilityEquipmentServer(
+    @Query() dto: EquipmentCommandDto,
+    @Param('sessionId') sessionId: string,
+    ): Promise<any> {
+    const output: any =  await this.equipmentService.sendCommand(dto.server_url, '/');
     this.equipmentGateway.sendOutputToUsers(sessionId, output);
     return output;
   }
@@ -54,8 +67,11 @@ export class EquipmentController {
     @Query() dto: EquipmentCommandDto,
     @Param('sessionId') sessionId: string,
   ): Promise<ILabServerOutput> {
-    const output: ILabServerOutput= await this.equipmentService.sendFile(dto.server_url, dto.command, file);
+    const url = dto.server_url + '/' + dto.equipment_type;
+    const output: ILabServerOutput= await this.equipmentService.sendFile(url, dto.command, file);
     this.equipmentGateway.sendOutputToUsers(sessionId, output);
     return output;
   }
+
+  
 }

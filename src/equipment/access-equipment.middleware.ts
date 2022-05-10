@@ -17,6 +17,7 @@ export class AccessEquipmentMiddleware implements NestMiddleware {
     const equipment: IEquipment =
       await this.connectionStrapi.getEquipmentForConnect(sessionId, jwt);
     req.query.server_url = equipment.server_url;
+    req.query.equipment_type = equipment.type;
     next();
   }
 }

@@ -16,9 +16,9 @@ import { IUser } from './interfaces/user.interface';
 
 @WebSocketGateway({
   namespace: 'equipment',
-    cors: {
-      origin: ["http://localhost:4200"]
-    }
+  cors: {
+    origin: ['http://localhost:4200','http://10.3.3.20:4200'],
+  },
 })
 export class EquipmentGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect

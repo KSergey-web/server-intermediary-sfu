@@ -1,6 +1,7 @@
-<h1>Intermediary server<h1>
+<h1>Intermediary server</h1>
 
 This server is engaged in the maintenance of static files (Angular-SPA) and is an intermediary between laboratory stands and end users. To check whether clients have access to the laboratory stands, accesses the main server.
+
 ![alt text](https://github.com/KSergey-web/hardware-sfu-online/blob/master/scheme.png)
 
 <p align="center">

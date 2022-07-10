@@ -26,8 +26,8 @@ import { ILabServerOutput } from './interfaces/lab-server-output.interface';
 export class EquipmentController {
   constructor(
     private readonly equipmentService: EquipmentService,
-    private readonly equipmentGateway: EquipmentGateway
-    ) {}
+    private readonly equipmentGateway: EquipmentGateway,
+  ) {}
 
   @ApiBearerAuth()
   @Get('send-command/session/:sessionId')
@@ -35,9 +35,12 @@ export class EquipmentController {
   async redirectCommand(
     @Query() dto: EquipmentCommandDto,
     @Param('sessionId') sessionId: string,
-    ): Promise<ILabServerOutput> {
+  ): Promise<ILabServerOutput> {
     const url = dto.server_url + '/' + dto.equipment_type;
-    const output: ILabServerOutput= await this.equipmentService.sendCommand(url, dto.command);
+    const output: ILabServerOutput = await this.equipmentService.sendCommand(
+      url,
+      dto.command,
+    );
     this.equipmentGateway.sendOutputToUsers(sessionId, output);
     return output;
   }
@@ -47,10 +50,11 @@ export class EquipmentController {
   @ApiParam({ name: 'sessionId' })
   async checkAvailabilityEquipmentServer(
     @Query() dto: EquipmentCommandDto,
-    @Param('sessionId') sessionId: string,
-    ): Promise<any> {
-    const output: any =  await this.equipmentService.sendCommand(dto.server_url, '/');
-    this.equipmentGateway.sendOutputToUsers(sessionId, output);
+  ): Promise<any> {
+    const output: any = await this.equipmentService.sendCommand(
+      dto.server_url,
+      '/',
+    );
     return output;
   }
 
@@ -68,10 +72,12 @@ export class EquipmentController {
     @Param('sessionId') sessionId: string,
   ): Promise<ILabServerOutput> {
     const url = dto.server_url + '/' + dto.equipment_type;
-    const output: ILabServerOutput= await this.equipmentService.sendFile(url, dto.command, file);
+    const output: ILabServerOutput = await this.equipmentService.sendFile(
+      url,
+      dto.command,
+      file,
+    );
     this.equipmentGateway.sendOutputToUsers(sessionId, output);
     return output;
   }
-
-  
 }

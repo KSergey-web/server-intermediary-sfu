@@ -1,8 +1,19 @@
 <h1>Intermediary server</h1>
 
-This server is engaged in the maintenance of static files (Angular-SPA) and is an intermediary between laboratory stands and end users. To check whether clients have access to the laboratory stands, accesses the main server.
+This server is engaged in the maintenance of static files (Angular-SPA) and is an intermediary between laboratory stands and end users. To check whether clients have access to the laboratory stands, accesses the main server. Among other things, it is able to provide access to one laboratory stand to several users using socket.io.
 
 ![alt text](https://github.com/KSergey-web/hardware-sfu-online/blob/master/scheme.png)
+
+<h2>Relative links</h2>
+
+- laboratory stand server (https://github.com/KSergey-web/lab-server);
+- intermediary server (https://github.com/KSergey-web/server-intermediary-sfu);
+- main server based on CMS Straps (https://github.com/KSergey-web/hardware-sfu-online);
+- Angular SPA app (https://github.com/KSergey-web/hardware-client);
+
+Third-party software:
+
+- video stream server (https://github.com/aler9/rtsp-simple-server);
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>

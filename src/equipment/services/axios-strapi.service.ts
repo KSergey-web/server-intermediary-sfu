@@ -1,17 +1,16 @@
 import {
-  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import axios, { AxiosStatic } from 'axios';
 import { AXIOS, STRAPI_SERVER_URL } from '../constants';
 import { IEquipment } from '../interfaces/equipment.interface';
-import { IUser } from '../interfaces/user.interface';
-import { AxiosOperations } from './axios-operations.class';
-import axios, { AxiosStatic } from 'axios';
 import { IConnectionStrapi } from '../interfaces/http-strapi.interface';
 import { ISession } from '../interfaces/session.interface';
+import { IUser } from '../interfaces/user.interface';
+import { AxiosOperations } from './axios-operations.class';
 
 @Injectable()
 export class AxiosStrapiService implements IConnectionStrapi {
@@ -48,7 +47,10 @@ export class AxiosStrapiService implements IConnectionStrapi {
     } catch (error) {
       AxiosOperations.handleAxiosStrapiError(error);
     }
-    if (!equipment) throw new InternalServerErrorException('Equipment received from strapi is undefined');
+    if (!equipment)
+      throw new InternalServerErrorException(
+        'Equipment received from strapi is undefined',
+      );
     return equipment;
   }
 }

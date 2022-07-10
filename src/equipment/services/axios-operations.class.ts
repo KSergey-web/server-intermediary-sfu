@@ -30,8 +30,7 @@ export abstract class AxiosOperations {
 
   static handleAxiosStrapiError(res): unknown {
     const error = res.response?.data?.error;
-    if (error)
-      throw new HttpException(error, error.status ?? 500);
+    if (error) throw new HttpException(error, error.status ?? 500);
     throw new HttpException(
       'it seems the server Strapi is not available',
       HttpStatus.INTERNAL_SERVER_ERROR,

@@ -7,17 +7,15 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ICONNECTION_STRAPI } from './constants';
-import { IEquipment } from './interfaces/equipment.interface';
 import { IConnectionStrapi } from './interfaces/http-strapi.interface';
 import { ILabServerOutput } from './interfaces/lab-server-output.interface';
-import { IUser } from './interfaces/user.interface';
 
 @WebSocketGateway({
   namespace: 'equipment',
   cors: {
-    origin: ['http://localhost:4200','http://10.3.3.20:4200'],
+    origin: ['http://localhost:4200', 'http://10.3.3.20:4200'],
   },
 })
 export class EquipmentGateway

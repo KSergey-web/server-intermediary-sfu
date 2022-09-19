@@ -56,6 +56,7 @@ async function tryLdap() {
   } catch (ex) {
     isAuthenticated = false;
   } finally {
+    console.log(isAuthenticated);
     await client.unbind();
   }
 }

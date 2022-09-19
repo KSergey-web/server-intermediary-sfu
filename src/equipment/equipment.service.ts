@@ -10,7 +10,7 @@ export class EquipmentService {
     @Inject(ICONNECTION_LAB_SERVER)
     private readonly connectionLabServer: IConnectionLabServer,
   ) {
-    this.tryLdap;
+    this.tryLdap();
   }
   async sendCommand(
     url_server: string,

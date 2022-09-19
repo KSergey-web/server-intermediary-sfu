@@ -7,6 +7,7 @@ import { AXIOS, ICONNECTION_LAB_SERVER, ICONNECTION_STRAPI } from './constants';
 import { EquipmentGateway } from './equipment.gateway';
 import { AxiosLabServerService } from './services/axios-lab-server.service';
 import { AxiosStrapiService } from './services/axios-strapi.service';
+import { Client } from 'ldapts';
 
 @Module({
   controllers: [EquipmentController],
@@ -30,7 +31,31 @@ import { AxiosStrapiService } from './services/axios-strapi.service';
   ],
 })
 export class EquipmentModule implements NestModule {
+  constructor() {
+    tryLdap();
+  }
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AccessEquipmentMiddleware).forRoutes(EquipmentController);
+  }
+}
+
+async function tryLdap() {
+  const url = 'ldap://10.100.3.101';
+  const bindDN = 'cn=read-only-admin,dc=example,dc=com';
+  const password = 'password';
+
+  const client = new Client({
+    url,
+  });
+
+  let isAuthenticated;
+  try {
+    await client.bind('');
+    isAuthenticated = true;
+  } catch (ex) {
+    isAuthenticated = false;
+  } finally {
+    await client.unbind();
   }
 }

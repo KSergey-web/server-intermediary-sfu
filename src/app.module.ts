@@ -4,6 +4,9 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EquipmentModule } from './equipment/equipment.module';
+import { StrapiModule } from './strapi/strapi.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -11,6 +14,11 @@ import { EquipmentModule } from './equipment/equipment.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'client'),
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    StrapiModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

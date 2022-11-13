@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EquipmentModule } from './equipment/equipment.module';
-import { StrapiModule } from './strapi/strapi.module';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
+import { EquipmentModule } from './equipment/equipment.module';
+import { SubgroupStrapiModule } from './strapi/subgroup/subgroup-strapi.module';
+import { UsersStrapiModule } from './strapi/users-strapi/users-strapi.module';
 
 @Module({
   imports: [
@@ -17,8 +18,9 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    StrapiModule,
     AuthModule,
+    SubgroupStrapiModule,
+    UsersStrapiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

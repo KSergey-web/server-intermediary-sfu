@@ -3,14 +3,14 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { lastValueFrom, map } from 'rxjs';
 import { STRAPI_SERVER_URL } from 'src/equipment/constants';
 import { IUser } from 'src/interfaces/user.interface';
-import { LtabService } from 'src/ltab/ltab.service';
+import { LdapAuthService } from 'src/ltab/ldap-auth.service';
 import { LoginDTO } from './dto/login-dto.class';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly ltabService: LtabService,
+    private readonly ltabAuthService: LdapAuthService,
   ) {}
 
   async login(dto: LoginDTO): Promise<{ user: IUser; jwt: string }> {
@@ -22,7 +22,7 @@ export class AuthService {
       authData = await lastValueFrom(auth$);
     } catch (err) {
       if (err.response.status == 400) {
-        const user = await this.ltabService.authWithLtab(dto);
+        const user = await this.ltabAuthService.authWithLtab(dto);
         return await this.registr(user, dto.password);
       }
       throw err;

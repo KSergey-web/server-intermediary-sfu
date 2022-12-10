@@ -1,16 +1,12 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { forkJoin, iif, map, mergeMap, Observable, of } from 'rxjs';
-import { AuthService } from 'src/auth/auth.service';
 import { STRAPI_SERVER_URL } from 'src/equipment/constants';
 import { IUser } from 'src/interfaces/user.interface';
 
 @Injectable()
 export class UsersStrapiService {
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
   checkUserInStrapidb(
     user: IUser,
@@ -28,6 +24,19 @@ export class UsersStrapiService {
         map(({ data }) => {
           if (!data.length) return { user, existInDb: false };
           return { user: data[0], existInDb: true };
+        }),
+      );
+  }
+
+  checkUserInStrapidbByUsername(username: IUser): Observable<boolean> {
+    return this.httpService
+      .get<IUser[]>(
+        STRAPI_SERVER_URL + 'api/users' + `?filters[username][$eq]=` + username,
+      )
+      .pipe(
+        map(({ data }) => {
+          if (!data.length) return false;
+          return true;
         }),
       );
   }

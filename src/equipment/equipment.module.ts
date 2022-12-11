@@ -1,10 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { EquipmentService } from './equipment.service';
-import { EquipmentController } from './equipment.controller';
-import { AccessEquipmentMiddleware } from './access-equipment.middleware';
 import axios from 'axios';
+import { AccessEquipmentMiddleware } from './access-equipment.middleware';
 import { AXIOS, ICONNECTION_LAB_SERVER, ICONNECTION_STRAPI } from './constants';
+import { EquipmentController } from './equipment.controller';
 import { EquipmentGateway } from './equipment.gateway';
+import { EquipmentService } from './equipment.service';
 import { AxiosLabServerService } from './services/axios-lab-server.service';
 import { AxiosStrapiService } from './services/axios-strapi.service';
 
@@ -30,6 +30,8 @@ import { AxiosStrapiService } from './services/axios-strapi.service';
   ],
 })
 export class EquipmentModule implements NestModule {
+  constructor() {}
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AccessEquipmentMiddleware).forRoutes(EquipmentController);
   }

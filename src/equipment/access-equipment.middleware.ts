@@ -1,6 +1,7 @@
 import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ICONNECTION_STRAPI } from './constants';
+import { EquipmentCommandDto } from './dto/equipment-command.dto';
 import { IEquipment } from './interfaces/equipment.interface';
 import { IConnectionStrapi } from './interfaces/http-strapi.interface';
 
@@ -16,8 +17,7 @@ export class AccessEquipmentMiddleware implements NestMiddleware {
     const sessionId = req.params.sessionId;
     const equipment: IEquipment =
       await this.connectionStrapi.getEquipmentForConnect(sessionId, jwt);
-    req.query.server_url = equipment.server_url;
-    req.query.equipment_type = equipment.type;
+    (req.query as unknown as EquipmentCommandDto).equipment = equipment;
     next();
   }
 }

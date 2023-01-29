@@ -36,10 +36,11 @@ export class EquipmentController {
     @Query() dto: EquipmentCommandDto,
     @Param('sessionId') sessionId: string,
   ): Promise<ILabServerOutput> {
-    const url = dto.server_url + '/' + dto.equipment_type;
+    const url = dto.equipment.server_url + '/' + dto.equipment.type;
     const output: ILabServerOutput = await this.equipmentService.sendCommand(
       url,
       dto.command,
+      dto.equipment,
     );
     this.equipmentGateway.sendOutputToUsers(sessionId, output);
     return output;
@@ -52,8 +53,9 @@ export class EquipmentController {
     @Query() dto: EquipmentCommandDto,
   ): Promise<any> {
     const output: any = await this.equipmentService.sendCommand(
-      dto.server_url,
+      dto.equipment.server_url,
       '/',
+      dto.equipment,
     );
     return output;
   }
@@ -71,11 +73,12 @@ export class EquipmentController {
     @Query() dto: EquipmentCommandDto,
     @Param('sessionId') sessionId: string,
   ): Promise<ILabServerOutput> {
-    const url = dto.server_url + '/' + dto.equipment_type;
+    const url = dto.equipment.server_url + '/' + dto.equipment.type;
     const output: ILabServerOutput = await this.equipmentService.sendFile(
       url,
       dto.command,
       file,
+      dto.equipment,
     );
     this.equipmentGateway.sendOutputToUsers(sessionId, output);
     return output;

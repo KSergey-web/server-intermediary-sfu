@@ -5,6 +5,7 @@ import { AxiosOperations } from './axios-operations.class';
 import * as FormData from 'form-data';
 import { IConnectionLabServer } from '../interfaces/http-lab-server.interface';
 import { AXIOS } from '../constants';
+import { IDeviceInfo } from '../interfaces/device-info.interface';
 
 @Injectable()
 export class AxiosLabServerService implements IConnectionLabServer {
@@ -12,9 +13,12 @@ export class AxiosLabServerService implements IConnectionLabServer {
   async sendCommand(
     url_server: string,
     command: string,
+    deviceInfo: IDeviceInfo,
   ): Promise<ILabServerOutput> {
     try {
-      const response = await axios.get(url_server + command);
+      const response = await axios.get(url_server + command, {
+        params: deviceInfo,
+      });
       return response.data;
     } catch (error) {
       AxiosOperations.handleAxiosEquipmentError(error);
@@ -25,6 +29,7 @@ export class AxiosLabServerService implements IConnectionLabServer {
     url_server: string,
     command: string,
     file: Express.Multer.File,
+    deviceInfo: IDeviceInfo,
   ): Promise<ILabServerOutput> {
     const formData = new FormData();
     formData.append('file', file.buffer, file.originalname);
@@ -33,6 +38,7 @@ export class AxiosLabServerService implements IConnectionLabServer {
         headers: {
           ...formData.getHeaders(),
         },
+        params: deviceInfo,
       });
       return response.data;
     } catch (error) {

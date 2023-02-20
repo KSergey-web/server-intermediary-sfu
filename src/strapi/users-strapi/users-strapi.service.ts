@@ -80,8 +80,8 @@ export class UsersStrapiService {
     jwt: string,
   ): Observable<number[]> {
     const checkUsersInDb$ = of(users).pipe(
-      mergeMap((q) =>
-        forkJoin(q.map((user) => this.checkUserInStrapidb(user, jwt))),
+      mergeMap((users) =>
+        forkJoin(users.map((user) => this.checkUserInStrapidb(user, jwt))),
       ),
     );
     const existingUsers$ = checkUsersInDb$

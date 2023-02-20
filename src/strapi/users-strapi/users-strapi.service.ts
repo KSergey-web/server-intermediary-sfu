@@ -48,7 +48,14 @@ export class UsersStrapiService {
           () => !!users.length,
           forkJoin(
             users.map((user) =>
-              this.createUser({ ...user, password: '1234ab' }, jwt),
+              this.createUser(
+                {
+                  ...user,
+                  password:
+                    new Date().toJSON() + Math.floor(Math.random() * 100),
+                },
+                jwt,
+              ),
             ),
           ),
           of([]),
@@ -66,5 +73,39 @@ export class UsersStrapiService {
         headers: { Authorization: jwt },
       })
       .pipe(map((res) => res.data));
+  }
+
+  createImportedFromLtabUsersInStrapi(
+    users: IUser[],
+    jwt: string,
+  ): Observable<number[]> {
+    const checkUsersInDb$ = of(users).pipe(
+      mergeMap((q) =>
+        forkJoin(q.map((user) => this.checkUserInStrapidb(user, jwt))),
+      ),
+    );
+    const existingUsers$ = checkUsersInDb$
+      .pipe(
+        mergeMap((users) => {
+          const existingUsers = users.filter((users) => users.existInDb);
+          const notExistingUsers = users.filter((users) => !users.existInDb);
+          return forkJoin({
+            existing: of(existingUsers).pipe(
+              map((usersData) => usersData.map((userData) => userData.user)),
+            ),
+            created: this.createUsers(
+              notExistingUsers.map((userData) => userData.user),
+              jwt,
+            ),
+          });
+        }),
+      )
+      .pipe(
+        map((res) => [
+          ...res.created.map((user) => user.id),
+          ...res.existing.map((user) => user.id),
+        ]),
+      );
+    return existingUsers$;
   }
 }

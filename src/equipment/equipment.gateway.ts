@@ -1,5 +1,8 @@
-import { Inject, Logger } from '@nestjs/common';
+import { Inject, Logger, UseFilters } from '@nestjs/common';
 import {
+  BaseWsExceptionFilter,
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -9,6 +12,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ICONNECTION_STRAPI } from './constants';
+import { EquipmentService } from './equipment.service';
+import { IEquipment } from './interfaces/equipment.interface';
 import { IConnectionStrapi } from './interfaces/http-strapi.interface';
 import { ILabServerOutput } from './interfaces/lab-server-output.interface';
 
@@ -24,8 +29,14 @@ export class EquipmentGateway
   constructor(
     @Inject(ICONNECTION_STRAPI)
     private readonly connectionStapi: IConnectionStrapi,
+    private readonly equipmentService: EquipmentService,
   ) {}
   private logger: Logger = new Logger('SocketGateway');
+
+  private socketInfoMap = new WeakMap<
+    Socket,
+    { equipment: IEquipment; sessionId: string }
+  >();
 
   @WebSocketServer()
   private server: Server;
@@ -41,16 +52,19 @@ export class EquipmentGateway
   handleConnection(client: Socket, ...args: any[]) {
     const sessionId = (client.request as any).sessionId;
     client.join(`${sessionId}`);
-    this.logger.log(client.id);
+    this.logger.log(`client ${client.id} connected to ${sessionId}`);
   }
 
   private setAuthMiddleware(server: Server) {
     server.use(async (socket, next) => {
       const jwt = socket.handshake.auth?.token;
-      const sessionId = socket.handshake.auth?.sessionId;
-      this.logger.log(socket.handshake.auth);
+      const sessionId: string = socket.handshake.auth?.sessionId + '';
       try {
-        await this.connectionStapi.getEquipmentForConnect(sessionId, jwt);
+        const equipment = await this.connectionStapi.getEquipmentForConnect(
+          sessionId,
+          jwt,
+        );
+        this.socketInfoMap.set(socket, { equipment, sessionId });
         (socket.request as any).sessionId = sessionId;
         next();
       } catch (err) {
@@ -63,8 +77,20 @@ export class EquipmentGateway
     this.setAuthMiddleware(server);
   }
 
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
+  @UseFilters(BaseWsExceptionFilter)
+  @SubscribeMessage('send-command')
+  async sendCommand(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { command: string },
+  ): Promise<any> {
+    const { equipment, sessionId } = this.socketInfoMap.get(client);
+    const res = await this.equipmentService.sendCommand(
+      equipment.server_url + '/' + equipment.type,
+      payload.command,
+      equipment,
+    );
+
+    this.sendOutputToUsers(sessionId, res);
+    return res;
   }
 }

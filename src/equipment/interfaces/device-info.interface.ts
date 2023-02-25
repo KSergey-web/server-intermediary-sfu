@@ -1,5 +1,7 @@
 export interface IDeviceInfo {
-  devicePort: number;
+  id: number;
 
-  arduinoPort: number;
+  devicePort?: number;
+
+  arduinoPort?: number;
 }

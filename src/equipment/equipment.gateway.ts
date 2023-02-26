@@ -84,13 +84,20 @@ export class EquipmentGateway
     @MessageBody() payload: { command: string },
   ): Promise<any> {
     const { equipment, sessionId } = this.socketInfoMap.get(client);
-    const res = await this.equipmentService.sendCommand(
-      equipment.server_url + '/' + equipment.type,
-      payload.command,
-      equipment,
-    );
-
-    this.sendOutputToUsers(sessionId, res);
-    return res;
+    try {
+      const res = await this.equipmentService.sendCommand(
+        equipment.server_url + '/' + equipment.type,
+        payload.command,
+        equipment,
+      );
+      this.sendOutputToUsers(sessionId, res);
+      return res;
+    } catch (err) {
+      return {
+        status: err.status,
+        messsage: err.message,
+        err,
+      };
+    }
   }
 }

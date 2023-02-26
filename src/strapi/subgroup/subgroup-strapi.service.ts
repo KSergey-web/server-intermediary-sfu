@@ -14,37 +14,8 @@ export class SubgroupStrapiService {
   ) {}
 
   patchSubgroupByUsersFromLtab(groupId: number, users: IUser[], jwt: string) {
-    const checkUsersInDb$ = of(users).pipe(
-      mergeMap((q) =>
-        forkJoin(
-          q.map((user) =>
-            this.usersStrapiService.checkUserInStrapidb(user, jwt),
-          ),
-        ),
-      ),
-    );
-    const existingUsers$ = checkUsersInDb$
-      .pipe(
-        mergeMap((users) => {
-          const existingUsers = users.filter((users) => users.existInDb);
-          const notExistingUsers = users.filter((users) => !users.existInDb);
-          return forkJoin({
-            existing: of(existingUsers).pipe(
-              map((usersData) => usersData.map((userData) => userData.user)),
-            ),
-            created: this.usersStrapiService.createUsers(
-              notExistingUsers.map((userData) => userData.user),
-              jwt,
-            ),
-          });
-        }),
-      )
-      .pipe(
-        map((res) => [
-          ...res.created.map((user) => user.id),
-          ...res.existing.map((user) => user.id),
-        ]),
-      );
+    const existingUsers$ =
+      this.usersStrapiService.createImportedFromLtabUsersInStrapi(users, jwt);
     const newUsersList$ = this.getSubgroup(groupId, jwt).pipe(
       mergeMap((subgroup) =>
         existingUsers$.pipe(

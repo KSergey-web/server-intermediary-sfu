@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { EquipmentModule } from './equipment/equipment.module';
 import { SubgroupStrapiModule } from './strapi/subgroup/subgroup-strapi.module';
 import { UsersStrapiModule } from './strapi/users-strapi/users-strapi.module';
+import { SessionModule } from './strapi/session/session.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UsersStrapiModule } from './strapi/users-strapi/users-strapi.module';
     AuthModule,
     SubgroupStrapiModule,
     UsersStrapiModule,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
